@@ -246,6 +246,7 @@ void userInput(int col, int row) {
     int work_col;
     int mov_row;
     int mov_col;
+    char input;
     /*
     //       80    -    (5 * 9) + (9 +1)  => 80-55 / 2 => 12
     col = (TOTCOLS - ( (WIDTH * DIM ) + (DIM + 1)) )/ 2;
@@ -266,11 +267,49 @@ void userInput(int col, int row) {
     mov_row = our_row;
     mov_col = our_col;
 
+
     int sudoku[DIM][DIM];
     for( work_row = 0; work_row < DIM ; work_row += 1) {
         for(work_col = 0; work_col < DIM; work_col += 1){
-            scanf("%d",&sudoku[work_row][work_col]);
-            mov_col += 6;
+            //scanf("%d",&sudoku[work_row][work_col]);
+
+            input = getche();
+            //Not BackSpace;
+
+            if( input != BS ) {
+                sudoku[work_row][work_col] = ( input - '0');
+                mov_col += 6;
+            }
+            else {
+                // If our Cursor at Starting position and we are trying to do\
+                backspace that time we don't need to do that so this condition
+
+                if( !(input == BS && mov_col == our_col && mov_row == our_row) ) {
+
+                    //-2 Because it will be Incremented 1 on for loop\
+                    (logic is to go backward one) so to compromise -2
+
+                    work_col -= 2;
+                    mov_col -= 6;
+
+                    // our Column cursor is at our starting position but not at start\
+                    if we try to backward it have to go to previous row last column
+
+                    if(mov_col < our_col ) {
+                        //Last column
+                        mov_col = 63;
+
+                        //Same row should be 2 row up
+                        mov_row -= 2;
+
+                        //Same our Col will be update on for loop so - 2
+                        work_col = DIM - 2;
+
+                        //Row will become -1 previous row
+                        work_row -= 1;
+                    }
+                }
+            }
             gotoxy( mov_col, mov_row );
         }
         mov_row += 2;
@@ -280,9 +319,7 @@ void userInput(int col, int row) {
 
     sudokuSolver(sudoku);
     //getch();
-
 }
-
 //Only for Checking
 void dummyFill() {
     int row;
